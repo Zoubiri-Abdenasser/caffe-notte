@@ -33,10 +33,36 @@ function App() {
   const [activeTab, setActiveTab] = useState<Tab>('coffee')
   const [formMsg, setFormMsg] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setFormMsg('تم استلام طلبك! سنؤكد الحجز قريبًا.')
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  const form = e.currentTarget
+  const formData = new FormData(form)
+
+  const payload = {
+    name: formData.get('name'),
+    phone: formData.get('phone'),
+    date: formData.get('date'),
+    guests: formData.get('guests'),
+    notes: formData.get('notes'),
   }
+
+  try {
+    const res = await fetch('http://localhost:4000/api/reservations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    const data = await res.json()
+    if (res.ok) {
+      setFormMsg('تم حفظ حجزك بنجاح في قاعدة البيانات!')
+      form.reset()
+    } else {
+      setFormMsg(data.error || 'حدث خطأ، حاول مجددًا')
+    }
+  } catch (err) {
+    setFormMsg('تعذر الاتصال بالسيرفر. تأكد إنه يعمل.')
+  }
+}
 
   return (
     <div className="app">
@@ -155,23 +181,23 @@ function App() {
             </ul>
           </div>
           <form onSubmit={handleSubmit}>
-            <div className="form-row">
-              <input type="text" placeholder="الاسم الكامل" required />
-              <input type="tel" placeholder="رقم الجوال" required />
-            </div>
-            <div className="form-row">
-              <input type="date" required />
-              <select required defaultValue="">
-                <option value="" disabled>عدد الأفراد</option>
-                <option>1-2</option>
-                <option>3-4</option>
-                <option>5+</option>
-              </select>
-            </div>
-            <textarea placeholder="ملاحظات إضافية (اختياري)" />
-            <button type="submit" className="submit-btn">تأكيد الحجز</button>
-            <div className="form-msg">{formMsg}</div>
-          </form>
+  <div className="form-row">
+    <input type="text" name="name" placeholder="الاسم الكامل" required />
+    <input type="tel" name="phone" placeholder="رقم الجوال" required />
+  </div>
+  <div className="form-row">
+    <input type="date" name="date" required />
+    <select name="guests" required defaultValue="">
+      <option value="" disabled>عدد الأفراد</option>
+      <option>1-2</option>
+      <option>3-4</option>
+      <option>5+</option>
+    </select>
+  </div>
+  <textarea name="notes" placeholder="ملاحظات إضافية (اختياري)" />
+  <button type="submit" className="submit-btn">تأكيد الحجز</button>
+  <div className="form-msg">{formMsg}</div>
+</form>
         </div>
       </section>
 
