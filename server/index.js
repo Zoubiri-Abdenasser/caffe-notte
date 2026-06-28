@@ -44,7 +44,7 @@ app.get('/api/reservations', (req, res) => {
   res.json(rows);
 });
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`السيرفر يعمل على http://localhost:${PORT}`);
 });

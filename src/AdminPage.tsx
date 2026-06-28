@@ -23,7 +23,7 @@ function AdminPage() {
 
   useEffect(() => {
     if (!authed) return
-    fetch('http://localhost:4000/api/reservations')
+    fetch('https://caffe-notte-api.onrender.com/api/reservations')
       .then((res) => res.json())
       .then((data) => {
         setReservations(data)

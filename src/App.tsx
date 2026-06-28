@@ -47,7 +47,7 @@ function App() {
   }
 
   try {
-    const res = await fetch('http://localhost:4000/api/reservations', {
+    const res = await fetch('https://caffe-notte-api.onrender.com/api/reservations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
